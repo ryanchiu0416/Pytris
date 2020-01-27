@@ -288,8 +288,12 @@ def main():
     
         update_grid(locked_pos)
 
-        # iterate over a set of "rows" to check if theres a row that can be removed from grid
-        # currently iterate thru all rows
+        # for a more continuous visual when clearing lines. 
+        draw_grid()
+        pygame.display.update()
+        #
+
+        # iterate over a set of "rows" (from locked) to check if there's a row that can be removed from grid
         for r in rows_to_check:
             if row_check(r) is True:
                 removeRow(r)
