@@ -279,16 +279,13 @@ def main():
             currentPiece.convert_shape_to_grid()
         rows_to_check = set()
         if lockCheck():
-            for pos in curr_occupy: # works only for bottoms now
+            for pos in curr_occupy:
                 add_locked((pos[0], pos[1]), curr_occupy[(pos[0], pos[1])])
                 rows_to_check.add(pos[0])
             curr_occupy.clear()
             currentPiece = Piece(shapes[randrange(len(shapes))])
             currentPiece.convert_shape_to_grid()
     
-
-
-        
         update_grid(locked_pos)
 
         # iterate over a set of "rows" to check if theres a row that can be removed from grid
@@ -308,5 +305,5 @@ def main():
 
 main()
 
-
-# work on dropping a piece and locking it. check if pieces below are occupied.
+# Done with removing rows and stacking up. In progress for the rest such as
+# game over, etc.
