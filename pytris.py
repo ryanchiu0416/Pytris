@@ -121,12 +121,22 @@ curr_occupy = {}
 window = pygame.display.set_mode([window_width, window_height])
 pygame.display.set_caption("Tetris")
 
+font = pygame.font.Font('freesansbold.ttf', 32)
+score = 0
+
 pygame.draw.line(window, (255, 255, 255), (17, 17), (17, 621), 4) #left border
 pygame.draw.line(window, (255, 255, 255), (16, 17), (320, 17), 4) #top border
 pygame.draw.line(window, (255, 255, 255), (16, 621), (320, 621), 4) #bottom border
 pygame.draw.line(window, (255, 255, 255), (320, 16), (320, 623), 4) #right border
 
 grid = [ [(128,128,128) for i in range(col)] for j in range(row)] # create color grid with default gray
+
+def show_font():
+    score1 = font.render("Score:", True, (255,255,255))
+    window.blit(score1, (360, 250))
+    score2 = font.render(str(score), True, (255,255,255))
+    window.blit(score2, (400, 300))
+
 
 class Piece():
     def __init__(self, shape):
@@ -238,12 +248,17 @@ def removeRow(row):
 
 def main():
     global curr_occupy
+    global score
     running = True
+    
 
     # pygame.key.set_repeat(True)
     currentPiece = Piece(shapes[randrange(len(shapes))])
-
+    
     while running:
+        
+
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -298,11 +313,13 @@ def main():
             if row_check(r) is True:
                 removeRow(r)
                 update_locked_pos(r)
+                score += 10
         rows_to_check.clear()
 
         fill_currOccupy()
 
         draw_grid()
+        show_font()
         pygame.display.update()
 
     pygame.quit()
