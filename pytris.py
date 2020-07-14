@@ -158,11 +158,13 @@ def add_locked(key, color):
 
 def fill_currOccupy():
     for pos in curr_occupy:
-        grid[pos[0]][pos[1]] = curr_occupy.get(pos)
+        if pos[0] < row and pos[0] >= 0 and pos[1] < col and pos[1] >= 0:
+            grid[pos[0]][pos[1]] = curr_occupy.get(pos)
 
 def reset_currOccupy():
     for pos in curr_occupy:
-        grid[pos[0]][pos[1]] = (128,128,128)
+        if pos[0] < row and pos[0] >= 0 and pos[1] < col and pos[1] >= 0:
+            grid[pos[0]][pos[1]] = (128,128,128)
     curr_occupy.clear()
 
 def update_grid(occupy):
@@ -211,12 +213,14 @@ def lockCheck():
     for pos in curr_occupy:
         if pos[0] == row - 1:
             return True
-        if grid[pos[0] + 1][pos[1]] != (128,128,128):
+        if pos[0] + 1 < row and grid[pos[0] + 1][pos[1]] != (128,128,128):
             return True
     return False
 
 def row_check(row):
     colored_count = 0
+    print("row", row)
+    print("grid[row]", len(grid[row]))
     for i in range(len(grid[row])):
         if grid[row][i] != (128,128,128):
             colored_count += 1
@@ -252,17 +256,29 @@ def main():
     running = True
     
 
-    # pygame.key.set_repeat(True)
+    pygame.key.set_repeat(True)
     currentPiece = Piece(shapes[randrange(len(shapes))])
+    clock = pygame.time.Clock()
+    fall_time = 0
+    fall_speed = 0.22
     
-    while running:
-        
 
+    while running:
+        fall_time += clock.get_rawtime()
+        clock.tick()
+        hasDropped = False
+
+        if fall_time/1000 > fall_speed:
+            fall_time = 0
+            currentPiece.y += 1
+            hasDropped = True
+            if currentPiece.y >= row:
+                currentPiece.y -= 1
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+            
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     currentPiece.x -= 1
@@ -270,7 +286,7 @@ def main():
                     currentPiece.x += 1
                 if event.key == pygame.K_UP:
                     currentPiece.rotate += 1
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN and hasDropped is False:
                     currentPiece.y += 1
         window.fill((0,0,0))
         reset_currOccupy()
@@ -295,8 +311,9 @@ def main():
         rows_to_check = set()
         if lockCheck():
             for pos in curr_occupy:
-                add_locked((pos[0], pos[1]), curr_occupy[(pos[0], pos[1])])
-                rows_to_check.add(pos[0])
+                if pos[0] < row and pos[0] >= 0 and pos[1] < col and pos[1] >= 0:
+                    add_locked((pos[0], pos[1]), curr_occupy[(pos[0], pos[1])])
+                    rows_to_check.add(pos[0])
             curr_occupy.clear()
             currentPiece = Piece(shapes[randrange(len(shapes))])
             currentPiece.convert_shape_to_grid()
